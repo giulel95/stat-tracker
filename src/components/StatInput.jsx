@@ -3,24 +3,28 @@ import { useState } from 'react';
 function StatInput({ value, onSave, onCancel }) {
   const [inputValue, setInputValue] = useState(value);
 
+  const handleSave = () => {
+    onSave(inputValue);
+  };
+
   return (
     <div>
       <input
         type="text"
+        className="border p-2 w-full mb-4"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        className="border p-2 rounded w-full mb-2"
       />
-      <div className="flex gap-2">
+      <div>
         <button
-          className="bg-green-500 text-white px-3 py-1 rounded"
-          onClick={() => onSave(inputValue)}
+          onClick={handleSave}
+          className="bg-green-500 text-white rounded px-3 py-1 text-sm mr-2"
         >
           Save
         </button>
         <button
-          className="bg-gray-400 text-white px-3 py-1 rounded"
           onClick={onCancel}
+          className="bg-red-500 text-white rounded px-3 py-1 text-sm"
         >
           Cancel
         </button>

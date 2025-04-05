@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import StatCard from './components/StatCard';
+import CollapsibleCategory from './components/CollapsibleCategory';
 import StatInput from './components/StatInput';
 
 function StatTracker() {
   const [stats, setStats] = useState(() => {
+    // Load stats from localStorage or set default if none found
     const storedStats = localStorage.getItem('stats');
     return storedStats
       ? JSON.parse(storedStats)
@@ -11,7 +13,11 @@ function StatTracker() {
           Environment: [
             { label: 'Current Location', value: 'Yale Library' },
             { label: 'Temperature', value: '21°C' },
-            { label: 'Noise Level', value: 'Low' }
+            { label: 'Noise Level', value: 'Low' },
+            { label: 'Air Circulation', value: 'Artificial (Heated indoor air, comfortable but slightly dry.)' },
+            { label: 'Lighting Condition', value: 'Moderate (Soft indoor lighting, natural light increasing through windows.)' },
+            { label: 'Crowd Density', value: 'Sparse (Only a few students present, calm study environment.)' },
+            { label: 'Accessibility', value: 'High (Unobstructed seating, free movement between study areas.)' },
           ],
           Health: [
             { label: 'Sleep Debt', value: '0%' },
@@ -25,6 +31,7 @@ function StatTracker() {
 
   const [search, setSearch] = useState(''); // Search state
 
+  // Effect hook to store stats in localStorage whenever the stats change
   useEffect(() => {
     localStorage.setItem('stats', JSON.stringify(stats));
   }, [stats]);
@@ -64,19 +71,19 @@ function StatTracker() {
       {/* Loop through filtered categories */}
       {Object.entries(filteredStats).map(([category, items]) => (
         <div key={category} className="mb-6">
-          <h2 className="text-2xl font-semibold mb-3">{category}</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Loop through items inside category */}
-            {items.map(stat => (
-              <StatCard
-                key={stat.label}
-                stat={stat}
-                category={category}
-                onUpdate={handleUpdate}
-              />
-            ))}
-          </div>
+          <CollapsibleCategory category={category}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Loop through items inside category */}
+              {items.map(stat => (
+                <StatCard
+                  key={stat.label}
+                  stat={stat}
+                  category={category}
+                  onUpdate={handleUpdate}
+                />
+              ))}
+            </div>
+          </CollapsibleCategory>
         </div>
       ))}
     </div>
