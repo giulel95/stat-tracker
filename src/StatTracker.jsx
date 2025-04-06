@@ -56,6 +56,7 @@ function StatTracker() {
             { label: 'Sunlight Exposure', value: 'Increasing (Windows allowing natural light, still soft morning glow.)' },
             { label: 'Weather Forecast', value: 'Mostly clear, no precipitation expected.' },
             { label: 'Exact Location', value: 'Seated at a study table, preparing for a short break.' },
+            { label: 'Internal Heat Discomfort', value: '10%' },
           ],
           PersonalHealth: [
             { label: 'Sleep Debt', value: '0%' },
@@ -535,6 +536,7 @@ function StatTracker() {
             { label: 'Mystique Factor', value: '67% (Moderate-High) (Some find you intriguing, while others still overlook you unless you make a move.)' },
             { label: 'Style Icon Status', value: '74% (Growing) (Your fashion choices are becoming more noticed and appreciated.)' },
             { label: 'Social Media Impact', value: '61% (Medium-High) (Your online presence garners attention, but you’re not a full trendsetter yet.)' },
+            { label: 'Reliability', value: '57%' },
           ],
           ReputationScoreBySocialGroups: [
             { label: 'Sorority Sisters', value: '86% (Well-liked, confident, and stylish—respected within your social group, with steady influence.)' },
@@ -644,6 +646,9 @@ function StatTracker() {
             { label: 'MGT 510 (Management - Failed)', value: '30%' },
             { label: 'PLSC 135 (Political Science)', value: '40%' },
           ],
+          Stealth: [
+            { label: 'Library Stealth Level', value: '99%' },
+          ],
         };
   });
 
@@ -662,6 +667,31 @@ function StatTracker() {
         stat.label === label ? { ...stat, value: newValue } : stat
       ),
     }));
+  };
+
+  const downloadStats = () => {
+    const fileName = 'stats_data.json';
+    const statsBlob = new Blob([JSON.stringify(stats)], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(statsBlob);
+    link.download = fileName;
+    link.click();
+  };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsedStats = JSON.parse(reader.result);
+          setStats(parsedStats); // Set the imported stats into the state
+        } catch (error) {
+          alert('Failed to load stats: Invalid file format.');
+        }
+      };
+      reader.readAsText(file);
+    }
   };
 
   // Filter stats based on search term
@@ -685,6 +715,22 @@ function StatTracker() {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
+      
+      {/* Import Stats Button */}
+      <input
+        type="file"
+        accept=".json"
+        onChange={handleFileUpload}
+        className="mb-4"
+      />
+      
+      {/* Save Stats Button */}
+      <button 
+        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
+        onClick={downloadStats}
+      >
+        Save Stats
+      </button>
 
       {/* Loop through filtered categories */}
       {Object.entries(filteredStats).map(([category, items]) => (
